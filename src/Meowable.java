@@ -1,4 +1,3 @@
-package PACKAGE_NAME;
-
-public interface Meowable {
+interface Meowable {
+    void meow();
 }
