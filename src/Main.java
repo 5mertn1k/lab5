@@ -1,5 +1,6 @@
 import java.util.*;
 import java.io.*;
+import java.util.stream.Collectors;
 
 public class Main {
     private static int getIntInput(Scanner in) {
@@ -49,6 +50,10 @@ public class Main {
 
         return reversedmetod;
     }
+    private static String capitalize(String name) {
+        if (name == null || name.isEmpty()) return "";
+        return Character.toUpperCase(name.charAt(0)) + name.substring(1);
+    }
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         //1.1
@@ -65,6 +70,7 @@ public class Main {
 //
 //
 //        Fraction fraction = new Fraction(numerator, denominator);
+//        CachedFraction cachedFraction = new CachedFraction(fraction);
 //        System.out.println("Создана дробь: " + fraction);
 //
 //        int k=1;
@@ -79,18 +85,18 @@ public class Main {
 //            int choice = getIntInput(in);
 //
 //            switch (choice) {
-//                case 1 -> System.out.println("Вещественное значение: " + fraction.getDecimalValue());
+//                case 1 -> System.out.println("Вещественное значение: " + cachedFraction.getDecimalValue());
 //                case 2 -> {
 //                    System.out.print("Введите новый числитель: ");
-//                    fraction.seta(getIntInput(in));
-//                    System.out.println("Числитель изменен. Новая дробь: " + fraction);
+//                    cachedFraction.updateNumerator(getIntInput(in));
+//                    System.out.println("Числитель изменен. Новая дробь: " + cachedFraction);
 //                }
 //                case 3 -> {
 //                    System.out.print("Введите новый знаменатель (не равен нулю): ");
 //                    while (true) {
 //                        denominator = getIntInput(in);
 //                        if (denominator != 0) {
-//                            fraction.setb(denominator);
+//                            cachedFraction.updateDenominator(denominator);
 //                            break;
 //                        }
 //                        System.out.println("Знаменатель не может быть равен нулю. Попробуйте снова:");
@@ -230,17 +236,75 @@ public class Main {
 //        }
 
         //6.1
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(1);
-        queue.add(52);
-        queue.add(-4353453);
-        queue.add(4);
+//        Queue<String> queue = new LinkedList<>();
+//        queue.add("qw");
+//        queue.add("raz");
+//        queue.add("nolb");
+//        queue.add("hi");
+//
+//        System.out.println("Исходная очередь: " + queue);
+//
+//        List<String> reversed = reverseQueue(queue);
+//
+//        System.out.println("Элементы в обратном порядке: " + reversed);
 
-        System.out.println("Исходная очередь: " + queue);
+        //7.1
+//        List<Point> points = new ArrayList<>();
+//
+//        System.out.println("Введите количество точек:");
+//        int n = in.nextInt();
+//
+//        for (int i = 1; i <= n; i++) {
+//            System.out.println("Введите координаты точки " + i + " (X Y):");
+//            int x = in.nextInt();
+//            int y = in.nextInt();
+//            points.add(new Point(x, y));
+//        }
+//
+//
+//        Polyline polyline = points.stream()
+//                .map(Point::withPositiveY)
+//                .distinct()
+//                .sorted(Comparator.comparingInt(Point::getX))
+//                .collect(Collectors.collectingAndThen(
+//                        Collectors.toList(),
+//                        Polyline::new
+//                ));
+//
+//
+//        System.out.println("Результат:");
+//        System.out.println(polyline);
+        //7.2
+        List<String> inputLines = new ArrayList<>();
 
-        List<Integer> reversed = reverseQueue(queue);
+        System.out.println("Введите строки в формате 'Имя:номер' (или оставьте пустую строку для завершения):");
 
-        System.out.println("Элементы в обратном порядке: " + reversed);
+
+        while (true) {
+            String line = in.nextLine().trim();
+            if (line.isEmpty()) break;
+            inputLines.add(line);
+        }
+
+
+        Map<Integer, List<String>> groupedPeople = inputLines.stream()
+                .filter(line -> line.contains(":"))
+                .map(line -> line.split(":"))
+                .filter(parts -> parts.length == 2 )
+                .filter(parts -> parts[1].chars().allMatch(Character::isDigit))
+                .collect(Collectors.groupingBy(
+                        parts -> Integer.parseInt(parts[1]),
+                        Collectors.mapping(
+                                parts -> capitalize(parts[0].toLowerCase()),
+                                Collectors.toList()
+                        )
+                ));
+
+
+        System.out.println("Группировка людей по номерам:");
+        groupedPeople.forEach((key, value) -> System.out.println(key + ": " + value));
+
+
 
 
         in.close();
