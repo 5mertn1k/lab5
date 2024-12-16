@@ -1,6 +1,10 @@
 import java.util.*;
 import java.io.*;
 import java.util.stream.Collectors;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 
 public class Main {
     private static int getIntInput(Scanner in) {
@@ -275,34 +279,28 @@ public class Main {
 //        System.out.println("Результат:");
 //        System.out.println(polyline);
         //7.2
-        List<String> inputLines = new ArrayList<>();
+        String fileName1 = "src/qqq.txt";
 
-        System.out.println("Введите строки в формате 'Имя:номер' (или оставьте пустую строку для завершения):");
-
-
-        while (true) {
-            String line = in.nextLine().trim();
-            if (line.isEmpty()) break;
-            inputLines.add(line);
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName1))) {
+            Map<Integer, List<String>> groupedByNumber = reader.lines()
+                    .map(String::trim)
+                    .filter(line -> line.contains(":"))
+                    .map(line -> line.split(":"))
+                    .filter(parts -> parts.length == 2  )
+                    .map(parts -> new AbstractMap.SimpleEntry<>(
+                            Integer.parseInt(parts[1].trim()),
+                            capitalize(parts[0].trim().toLowerCase())
+                    ))
+                    .collect(Collectors.groupingBy(
+                            Map.Entry::getKey,
+                            Collectors.mapping(Map.Entry::getValue, Collectors.toList())
+                    ));
+            System.out.println(groupedByNumber);
+        }catch (IOException e) {
+            System.out.println("Ошибка при чтении файла: " + e.getMessage());
         }
 
 
-        Map<Integer, List<String>> groupedPeople = inputLines.stream()
-                .filter(line -> line.contains(":"))
-                .map(line -> line.split(":"))
-                .filter(parts -> parts.length == 2 )
-                .filter(parts -> parts[1].chars().allMatch(Character::isDigit))
-                .collect(Collectors.groupingBy(
-                        parts -> Integer.parseInt(parts[1]),
-                        Collectors.mapping(
-                                parts -> capitalize(parts[0].toLowerCase()),
-                                Collectors.toList()
-                        )
-                ));
-
-
-        System.out.println("Группировка людей по номерам:");
-        groupedPeople.forEach((key, value) -> System.out.println(key + ": " + value));
 
 
 
